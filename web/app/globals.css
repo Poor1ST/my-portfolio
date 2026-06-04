@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-display: var(--font-display), "Arial Black", impact, sans-serif;
+
+  @keyframes scan {
+    from {
+      top: 0%;
+    }
+    to {
+      top: 100%;
+    }
+  }
+}
+
+body {
+  background-color: #020617;
+  color: white;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom scrollbar for InteractiveLab viz panel */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 99px;
+}
+
+/* Prevent iOS zoom on input focus */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
