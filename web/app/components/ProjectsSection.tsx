@@ -140,14 +140,26 @@ export default function ProjectsSection() {
 
                     <div className="flex gap-4 mt-auto items-center flex-wrap">
                       {project.live && (
-                        <span className="flex items-center gap-2 text-sm font-semibold text-slate-100 border-b border-transparent pb-1">
+                        <a
+                          href={project.live}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-2 text-sm font-semibold text-slate-100 border-b border-transparent pb-1 hover:text-indigo-400 hover:border-indigo-400 transition-colors"
+                        >
                           Live URL <ExternalLink className="w-4 h-4" />
-                        </span>
+                        </a>
                       )}
                       {project.github && (
-                        <span className="flex items-center gap-2 text-sm font-semibold text-slate-100 border-b border-transparent pb-1">
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-2 text-sm font-semibold text-slate-100 border-b border-transparent pb-1 hover:text-indigo-400 hover:border-indigo-400 transition-colors"
+                        >
                           Source Code <Github className="w-4 h-4" />
-                        </span>
+                        </a>
                       )}
                     </div>
                   </div>
