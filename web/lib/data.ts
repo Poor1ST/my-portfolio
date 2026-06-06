@@ -34,9 +34,65 @@ export interface Project {
   image: string;
 }
 
-export const NAV_LINKS = ['About','Skills', 'Lab', 'Projects', 'Contact'];
+export interface ExperienceRole {
+  title: string;
+  period: string;
+}
 
-export const CATEGORIES = ['All', 'AI', 'Automation', 'Front End'];
+export interface Experience {
+  organization: string;
+  location: string;
+  type: 'internship' | 'apprenticeship' | 'organization';
+  roles: ExperienceRole[];
+  description: string[];
+  tags: string[];
+}
+
+export const NAV_LINKS = ['About', 'Lab', 'Skills', 'Experience', 'Projects', 'Contact'];
+
+export const CATEGORIES = ['All', 'AI', 'Front End'];
+
+export const EXPERIENCES: Experience[] = [
+  {
+    organization: 'Aksoro',
+    location: 'Sleman, Indonesia',
+    type: 'internship',
+    roles: [{ title: 'AI Trainer', period: 'Feb 2026 – May 2026' }],
+    description: [
+      'Trained, optimized, and maintained 25+ customer service AI agents across client accounts, collaborating directly with clients to translate business needs into effective AI configurations.',
+      'Accelerated AI training workflow by researching AI implementation and developing a custom AI skill for automated prompt generation, reducing manual effort in the training phase.',
+      'Conducted research on Agentic AI and emerging AI technologies, evaluating feasibility and cost-benefit trade-offs before recommending implementation decisions.',
+    ],
+    tags: ['AI Agents', 'Prompt Engineering', 'Agentic AI', 'Client Management'],
+  },
+  {
+    organization: 'Bangkit Academy led by Google, Tokopedia, Gojek, & Traveloka',
+    location: 'Bandung, Indonesia',
+    type: 'apprenticeship',
+    roles: [{ title: 'Machine Learning Cohort', period: 'Aug 2023 – Jan 2024' }],
+    description: [
+      'Completed intensive training in Machine Learning including supervised & unsupervised learning, computer vision, and NLP using TensorFlow.',
+      'Developed and deployed ML models for real-world case studies.',
+      'Gained skills in data preprocessing, visualization, and analysis using Python and Pandas.',
+    ],
+    tags: ['TensorFlow', 'Deep Learning', 'Computer Vision', 'NLP'],
+  },
+  {
+    organization: 'OmahTI UGM',
+    location: 'Sleman, Indonesia',
+    type: 'organization',
+    roles: [
+      { title: 'Head of Resource Management', period: 'Jan 2023 – Dec 2023' },
+      { title: 'Staff of Competitive Programming', period: 'Sep 2021 – Dec 2023' },
+    ],
+    description: [
+      'Managed assets and resource allocation for the organization as Head of Resource Management.',
+      'Participated in weekly training sessions to strengthen algorithmic thinking and problem-solving skills.',
+      'Designed and curated programming problems for high school-level programming competitions.',
+    ],
+    tags: ['Problem Solving', 'C++', 'Resource Management', 'Leadership'],
+  },
+];
 
 export const SKILLS: SkillGroup[] = [
   { category: 'AI / ML', icon: BrainCircuit, items: [
@@ -186,20 +242,21 @@ export const PROJECTS: Project[] = [
   {
     title: 'Sokin',
     roles: ['Frontend Developer'],
-    description: 'Contributed to building an e-commerce platform for a food delivery service on a team of six.',
-    overview: 'An e-commerce platform for a food delivery service, built collaboratively in a six-person team. The platform handles restaurant listings, menu browsing, cart management, and order tracking. My contributions focused on building responsive product pages, checkout flows, and integrating RESTful payment APIs.',
-    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'REST API', 'Zustand'],
+    description: 'Built a multi-role food order and delivery platform featuring real-time location tracking, live order management, and separate interfaces for customers, drivers, and merchants.',
+    overview: 'A food order and delivery service app built with the refine framework on top of Next.js, serving three distinct roles: customer, driver, and merchant. Customers browse restaurants and place orders, drivers receive real-time dispatch notifications with live location tracking via Mapbox and Socket.io, and merchants manage menus and order fulfillment. The backend uses Prisma/PostgreSQL for data persistence, next-auth for authentication, and Cloudinary for image uploads.',
+    technologies: ['refine', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Prisma', 'Socket.io', 'Mapbox GL', 'next-auth', 'Cloudinary', 'react-hook-form', 'Framer Motion'],
     challenges: [
-      'Coordinating feature development across six developers without merge conflicts',
-      'Implementing a real-time cart that syncs across browser tabs',
-      'Integrating with third-party payment gateway APIs securely',
+      'Implementing real-time location tracking and order dispatch notifications across three separate user roles',
+      'Managing role-based authentication and access control for customer, driver, and merchant interfaces',
+      'Handling image uploads and optimizations for menu items and merchant profiles',
     ],
     solutions: [
-      'Followed a feature-branch Git workflow with weekly sync meetings and PR code reviews',
-      'Used Zustand for lightweight client-side cart state with localStorage persistence and BroadcastChannel API for cross-tab sync',
-      'Abstracted payment API interactions behind a service layer with idempotency keys to prevent duplicate charges',
+      'Used Socket.io with separate rooms for real-time order status updates and driver location broadcasting on Mapbox',
+      'Leveraged refine framework\'s built-in auth provider with next-auth and Prisma adapter to enforce role-based routing and access control',
+      'Integrated Cloudinary via next-cloudinary for efficient image upload, transformation, and lazy loading',
     ],
-    tags: ['Next.js', 'TypeScript', 'Tailwind CSS'],
+    tags: ['refine', 'Next.js', 'Tailwind CSS', 'Real-time', 'PWA'],
+    github: 'https://github.com/ferdianfefe/sokin',
     date: '2022-07',
     categories: ['Front End'],
     image: 'Sokin.png',

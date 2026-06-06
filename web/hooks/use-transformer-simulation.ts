@@ -2,24 +2,22 @@
 
 import { useState, useRef, useCallback } from 'react';
 
-export interface Step {
-  type: string;
-  layer?: number;
-}
-
 export interface SentimentResult {
   class: string;
   confidence: number;
+  all: { label: string; score: number }[];
 }
+
+const TOTAL_ENCODER_LAYERS = 12;
+
+type Phase = 'input' | 'embedding' | 'encoder' | 'pooling' | 'output';
 
 export function useTransformerSimulation() {
   const [inputText, setInputText] = useState('');
   const [status, setStatus] = useState<'idle' | 'analyzing' | 'complete'>('idle');
   const [result, setResult] = useState<SentimentResult | null>(null);
-  const [numLayers, setNumLayers] = useState(2);
-  const [numHeads, setNumHeads] = useState(4);
-  const [hiddenDim, setHiddenDim] = useState(256);
-  const [activeStep, setActiveStep] = useState<Step | null>(null);
+  const [activeStep, setActiveStep] = useState<Phase | null>(null);
+  const [activeLayer, setActiveLayer] = useState<number | null>(null);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const apiResultRef = useRef<SentimentResult | null>(null);
@@ -33,6 +31,7 @@ export function useTransformerSimulation() {
     setStatus('idle');
     setResult(null);
     setActiveStep(null);
+    setActiveLayer(null);
     apiResultRef.current = null;
   }, []);
 
@@ -43,24 +42,23 @@ export function useTransformerSimulation() {
 
       setStatus('analyzing');
       setResult(null);
+      setActiveLayer(null);
       apiResultRef.current = null;
-      setActiveStep({ type: 'embedding' });
 
-      const stepsSequence: Step[] = [{ type: 'embedding' }];
-      for (let i = 0; i < numLayers; i++) {
-        stepsSequence.push({ type: 'attention_qkv', layer: i });
-        stepsSequence.push({ type: 'attention_scores', layer: i });
-        stepsSequence.push({ type: 'attention_output', layer: i });
-        stepsSequence.push({ type: 'concat_heads', layer: i });
-        stepsSequence.push({ type: 'add_norm_1', layer: i });
-        stepsSequence.push({ type: 'ffn_expand', layer: i });
-        stepsSequence.push({ type: 'ffn_contract', layer: i });
-        stepsSequence.push({ type: 'add_norm_2', layer: i });
+      // Build the full step sequence with per-layer ticks
+      const steps: { phase: Phase; layer?: number }[] = [
+        { phase: 'input' },
+        { phase: 'embedding' },
+      ];
+      for (let i = 0; i < TOTAL_ENCODER_LAYERS; i++) {
+        steps.push({ phase: 'encoder', layer: i });
       }
-      stepsSequence.push({ type: 'output' });
+      steps.push({ phase: 'pooling' });
+      steps.push({ phase: 'output' });
 
       let stepIdx = 0;
-      setActiveStep(stepsSequence[0]);
+      setActiveStep(steps[0].phase);
+      if (steps[0].layer !== undefined) setActiveLayer(steps[0].layer);
 
       fetch('/api/sentiment', {
         method: 'POST',
@@ -75,6 +73,7 @@ export function useTransformerSimulation() {
             apiResultRef.current = {
               class: best.label,
               confidence: best.score,
+              all: predictions,
             };
           }
         })
@@ -84,8 +83,10 @@ export function useTransformerSimulation() {
 
       intervalRef.current = setInterval(() => {
         stepIdx++;
-        if (stepIdx < stepsSequence.length) {
-          setActiveStep(stepsSequence[stepIdx]);
+        if (stepIdx < steps.length) {
+          const s = steps[stepIdx];
+          setActiveStep(s.phase);
+          setActiveLayer(s.layer ?? null);
         } else {
           if (intervalRef.current) {
             clearInterval(intervalRef.current);
@@ -97,15 +98,17 @@ export function useTransformerSimulation() {
             setResult({
               class: apiResult.class,
               confidence: Math.min(Math.max(apiResult.confidence, 0), 1),
+              all: apiResult.all,
             });
           } else {
-            setResult({ class: 'Error', confidence: 0 });
+            setResult({ class: 'Error', confidence: 0, all: [] });
           }
           setActiveStep(null);
+          setActiveLayer(null);
         }
       }, intervalTime);
     },
-    [inputText, status, numLayers],
+    [inputText, status],
   );
 
   return {
@@ -113,13 +116,8 @@ export function useTransformerSimulation() {
     setInputText,
     status,
     result,
-    numLayers,
-    setNumLayers,
-    numHeads,
-    setNumHeads,
-    hiddenDim,
-    setHiddenDim,
     activeStep,
+    activeLayer,
     handleAnalyze,
     reset,
   };

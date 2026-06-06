@@ -1,382 +1,330 @@
 'use client';
 
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings2, Send, Sparkles, RefreshCw, Cpu, GitMerge, Combine } from 'lucide-react';
+import { Send, Sparkles, RefreshCw, Layers, GitCommitVertical, Key, BrainCircuit, Type, Shrink, Target, Activity, ScanText } from 'lucide-react';
 import { useTransformerSimulation } from '@/hooks/use-transformer-simulation';
 
-const ParamControl = ({ label, value, options, onChange, disabled }: { label: string, value: number, options: number[], onChange: (val: number) => void, disabled: boolean }) => (
-  <div className="flex flex-col gap-2">
-    <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">{label}</span>
-    <div className="flex bg-slate-900/50 rounded-xl p-1 border border-white/5">
-      {options.map(opt => (
-        <button
-          key={opt}
-          type="button"
-          onClick={() => onChange(opt)}
-          disabled={disabled}
-          className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-all ${
-            value === opt
-              ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
-              : 'text-slate-500 hover:text-slate-300 transparent border border-transparent'
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
-        >
-          {opt}
-        </button>
-      ))}
+interface StepNodeProps {
+  isActive?: boolean;
+  isDone?: boolean;
+  isSuccess?: boolean;
+  title: string;
+  subtitle: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children?: React.ReactNode;
+  layout?: 'center' | 'left';
+}
+
+const StepNode = ({
+  isActive, isDone, isSuccess, title, subtitle, icon: Icon, children, layout = 'center'
+}: StepNodeProps) => {
+  const isFaded = !isActive && !isDone && !isSuccess;
+
+  return (
+    <div className={`relative flex flex-col ${layout === 'center' ? 'items-center text-center' : 'items-start'} z-10 w-full`}>
+       <motion.div
+         initial={false}
+         animate={{
+           borderColor: isSuccess ? 'rgba(16, 185, 129, 0.5)' : isActive ? 'rgba(99, 102, 241, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+           backgroundColor: isSuccess ? 'rgba(16, 185, 129, 0.1)' : isActive ? 'rgba(30, 27, 75, 0.9)' : 'rgba(15, 23, 42, 0.8)',
+           scale: isActive ? 1.02 : 1,
+           opacity: isFaded ? 0.3 : 1,
+           boxShadow: isActive ? '0 0 30px rgba(99, 102, 241, 0.2)' : isSuccess ? '0 0 30px rgba(16, 185, 129, 0.2)' : 'none',
+         }}
+          className="w-full max-w-sm rounded-[1.5rem] p-3 sm:p-4 border border-white/10 backdrop-blur-sm transition-all"
+       >
+             <div className={`flex items-center gap-3 ${layout === 'center' ? 'justify-center' : ''}`}>
+                <div className={`p-2 rounded-xl transition-colors duration-500 ${
+                   isSuccess ? 'bg-emerald-500/20 text-emerald-400' : isActive ? 'bg-indigo-500/20 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.5)]' : 'bg-white/5 text-slate-500'
+                }`}>
+                   <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
+            <div className="text-left">
+                <h4 className={`font-bold text-sm sm:text-base transition-colors duration-500 ${isSuccess ? 'text-emerald-300' : isActive ? 'text-indigo-300' : 'text-slate-300'}`}>
+                  {title}
+                </h4>
+                <p className="text-[10px] sm:text-xs text-slate-400 font-light">{subtitle}</p>
+            </div>
+         </div>
+          {children && (
+             <div className="mt-3">
+               {children}
+             </div>
+          )}
+       </motion.div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function InteractiveLab() {
   const {
     inputText, setInputText,
     status, result,
-    numLayers, setNumLayers,
-    numHeads, setNumHeads,
-    hiddenDim, setHiddenDim,
-    activeStep,
+    activeStep, activeLayer,
     handleAnalyze, reset,
   } = useTransformerSimulation();
 
   return (
-    <section id="lab" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative border-t border-white/10 z-10 bg-slate-950/30 overflow-hidden">
+    <section id="lab" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative z-10 bg-slate-950 overflow-hidden min-h-screen border-t border-white/5">
       <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-12 md:mb-24 flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8"
+          className="mb-8 sm:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6"
         >
           <div>
-            <h3 className="font-mono text-indigo-400 text-sm uppercase tracking-[0.2em] mb-4">Interactive Lab //</h3>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase">
-              Transformer <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Architecture</span>
+            <h3 className="font-mono text-indigo-400 text-sm uppercase tracking-widest mb-4">Visual Explorer //</h3>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-2">
+              Inside <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">BERT</span>
             </h2>
           </div>
-          <div className="text-slate-400 max-w-sm md:text-right font-light text-xs sm:text-sm">
-            Tune the hyperparameters of a simulated Transformer model and visualize how the data flows through its multi-head attention and feed-forward layers.
+          <div className="text-slate-400 max-w-sm font-light text-sm text-left md:text-right">
+            See exactly how an AI model turns raw text into deep understanding, layer by layer.
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-          {/* LEFT: Input & Controls */}
+          {/* LEFT: Controls (Sticky on Desktop) */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-5 sm:p-6 md:p-8 flex flex-col gap-5 sm:gap-6 shadow-2xl relative overflow-hidden"
+            className="lg:col-span-5 sticky top-24"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[40px]"></div>
+             <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col gap-6 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px] pointer-events-none"></div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                <Settings2 className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-100">Model Params</h3>
-            </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2 mb-2">
+                     <Layers className="w-5 h-5 text-indigo-400" /> Start Simulation
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-400 font-light">Type a sentence below and watch how data flows through the neural network.</p>
+                </div>
 
-            <div className="space-y-4">
-              <ParamControl label="Layers (Depth)" value={numLayers} options={[1, 2, 3]} onChange={setNumLayers} disabled={status === 'analyzing'} />
-              <ParamControl label="Attention Heads" value={numHeads} options={[2, 4, 8]} onChange={setNumHeads} disabled={status === 'analyzing'} />
-              <ParamControl label="Hidden Dimension" value={hiddenDim} options={[64, 128, 256]} onChange={setHiddenDim} disabled={status === 'analyzing'} />
-            </div>
-
-            <div className="h-px bg-white/10 w-full my-2"></div>
-
-            <form onSubmit={handleAnalyze} className="relative z-10 flex-1 flex flex-col justify-end">
-              <textarea
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder="Enter text to analyze..."
-                className="w-full h-24 sm:h-28 bg-slate-900/50 border border-white/10 rounded-2xl p-3 sm:p-4 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 resize-none transition-all text-sm font-light shadow-inner mb-3 sm:mb-4"
-                disabled={status === 'analyzing'}
-              ></textarea>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 transition-colors"
-                  disabled={status === 'analyzing'}
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
-                <button
-                  type="submit"
-                  disabled={status === 'analyzing' || !inputText.trim()}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-4 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
-                >
-                  {status === 'analyzing' ? (
-                    <span className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 animate-pulse" /> Processing Flow...
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Send className="w-4 h-4" /> Run Inference
-                    </span>
-                  )}
-                </button>
-              </div>
-            </form>
-
-            <AnimatePresence>
-              {status === 'complete' && result && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-2 p-3 sm:p-4 border border-indigo-500/30 rounded-2xl bg-indigo-500/10 backdrop-blur-md"
-                >
-                  <p className="text-[10px] sm:text-xs font-mono text-indigo-300 uppercase tracking-widest mb-2">Output Tensor</p>
-                  <div className="flex items-end justify-between">
-                    <span className={`text-lg sm:text-xl font-black ${
-                      result.class === 'Positive' ? 'text-emerald-400' :
-                      result.class === 'Negative' ? 'text-rose-400' : 'text-slate-300'
-                    }`}>
-                      {result.class}
-                    </span>
-                    <span className="text-[10px] sm:text-xs font-mono text-slate-400">
-                      Conf: {((result.confidence) * 100).toFixed(1)}%
-                    </span>
+                <form onSubmit={handleAnalyze} className="relative z-10 flex flex-col gap-4">
+                  <textarea
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    placeholder="e.g. The movie was absolutely fantastic!"
+                    className="w-full h-32 bg-black/40 border border-white/10 rounded-2xl p-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 resize-none transition-all text-sm font-light shadow-inner"
+                    disabled={status === 'analyzing'}
+                  ></textarea>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={reset}
+                      className="p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 transition-colors"
+                      disabled={status === 'analyzing'}
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={status === 'analyzing' || !inputText.trim()}
+                      className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white px-4 py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg"
+                    >
+                      {status === 'analyzing' ? (
+                        <span className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 animate-pulse" /> Processing...
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Send className="w-4 h-4" /> Run Architecture
+                        </span>
+                      )}
+                    </button>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </form>
+
+                <AnimatePresence>
+                  {status === 'complete' && result && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="mt-4 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex justify-between items-center relative overflow-hidden"
+                    >
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-[40px]"></div>
+                      <div className="relative z-10">
+                         <div className="text-xs text-emerald-400/80 uppercase tracking-widest font-mono mb-1">Final Output</div>
+                         <div className="text-2xl font-black text-emerald-400">{result.class}</div>
+                      </div>
+                      <div className="relative z-10 text-right">
+                         <div className="text-[10px] text-slate-400 font-mono">Confidence</div>
+                         <div className="text-lg text-emerald-100 font-mono">{((result.confidence) * 100).toFixed(1)}%</div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+             </div>
           </motion.div>
 
-          {/* RIGHT: Architecture Visualization */}
+          {/* RIGHT: Pipeline Visualization */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-8 bg-slate-900/30 backdrop-blur-xl border border-white/5 rounded-3xl p-4 sm:p-6 relative overflow-hidden flex flex-col justify-end shadow-inner min-h-[400px] sm:min-h-[500px] lg:min-h-[600px] gap-2 sm:gap-3"
+            className="lg:col-span-7 w-full relative py-2 sm:py-8"
           >
-            {/* Output Header */}
-            <div className={`p-3 rounded-xl border transition-all duration-300 flex items-center justify-center gap-2 ${
-              activeStep?.type === 'output' || status === 'complete'
-                ? 'bg-indigo-500/20 border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.3)]'
-                : 'bg-white/5 border-white/10 text-slate-500'
-            }`}>
-              <Cpu className="w-4 h-4" />
-              <span className="text-sm font-mono tracking-wider">Classification Head</span>
-            </div>
-
-            {/* Transformer Layers */}
-            <div className="flex-1 flex flex-col-reverse gap-4 overflow-y-auto pr-2 custom-scrollbar my-2">
-              {Array.from({ length: numLayers }).map((_, layerIdx) => (
-                <div key={layerIdx} className="relative border border-white/10 rounded-2xl p-2 bg-slate-950/50 flex flex-col gap-2">
-                  <div className="absolute -left-2 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] uppercase font-mono tracking-widest text-slate-500">
-                    Layer {layerIdx + 1}
-                  </div>
-
-                  {/* Feed Forward */}
-                  <div className="relative">
-                    <div className="absolute left-4 -bottom-2 w-px h-2 bg-indigo-500/30"></div>
-                    <div className="absolute right-4 -bottom-2 w-px h-2 bg-indigo-500/30"></div>
-                    <div className={`p-2 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center gap-1 ${
-                      (activeStep?.type?.startsWith('ffn') && activeStep?.layer === layerIdx)
-                        ? 'bg-emerald-900/40 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]'
-                        : 'bg-white/5 border-white/10 text-slate-400'
-                    }`}>
-                      <span className="text-[10px] font-mono font-semibold tracking-widest text-emerald-200 text-center">Feed Forward Network</span>
-
-                      <div className="w-full flex flex-col gap-1 relative h-8 justify-center">
-                         <div className="flex gap-1 justify-center z-10 transition-all duration-500">
-                           {Array.from({ length: 16 }).map((_, i) => (
-                              <motion.div
-                                 key={`expand-${i}`}
-                                 initial={{ height: 4, opacity: 0.3 }}
-                                 animate={{
-                                    height: (activeStep?.type === 'ffn_expand' || activeStep?.type === 'ffn_contract') && activeStep?.layer === layerIdx ? 16 : 4,
-                                    opacity: (activeStep?.type === 'ffn_expand' || activeStep?.type === 'ffn_contract') && activeStep?.layer === layerIdx ? 1 : 0.3,
-                                    backgroundColor: activeStep?.type === 'ffn_expand' ? '#34d399' : '#10b981'
-                                 }}
-                                 className="w-1.5 rounded-full"
-                              />
-                           ))}
-                         </div>
-                         <AnimatePresence>
-                           {activeStep?.type === 'ffn_expand' && activeStep?.layer === layerIdx && (
-                             <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute top-0 right-2 text-[8px] font-mono text-emerald-300 bg-black/40 px-1 rounded"
-                             >
-                               GeLU
-                             </motion.div>
-                           )}
-                         </AnimatePresence>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Add & Norm 1 */}
-                  <div className="flex justify-center -my-3 z-10">
-                    <motion.div
-                      animate={{
-                        scale: activeStep?.type === 'add_norm_1' && activeStep?.layer === layerIdx ? 1.05 : 1,
-                        backgroundColor: activeStep?.type === 'add_norm_1' && activeStep?.layer === layerIdx ? 'rgba(56, 189, 248, 0.2)' : 'rgba(30, 41, 59, 1)',
-                        borderColor: activeStep?.type === 'add_norm_1' && activeStep?.layer === layerIdx ? 'rgba(56, 189, 248, 0.5)' : 'rgba(255, 255, 255, 0.1)',
-                        color: activeStep?.type === 'add_norm_1' && activeStep?.layer === layerIdx ? '#38bdf8' : '#94a3b8'
-                      }}
-                      className="text-[8px] font-mono px-2 py-0.5 rounded-full border flex items-center gap-1 shadow-lg"
-                    >
-                      <Combine className="w-2.5 h-2.5" /> Add & LayerNorm
-                    </motion.div>
-                  </div>
-
-                  {/* Multi-Head Attention Details */}
-                  <div className={`p-2 rounded-xl border transition-all duration-300 relative overflow-hidden ${
-                    (activeStep?.type?.startsWith('attention') || activeStep?.type === 'concat_heads') && activeStep?.layer === layerIdx
-                      ? 'bg-purple-900/40 border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.3)]'
-                      : 'bg-white/5 border-white/10 text-slate-400'
-                  }`}>
-                    <div className="text-center mb-2 text-[10px] font-mono font-semibold tracking-widest text-[#d8b4fe]">
-                      Multi-Head Attention
-                    </div>
-
-                    <div className="flex flex-col gap-2 relative z-10">
-                      {/* Q, K, V Matrices Generation */}
-                      <div className="flex justify-between items-center px-1 sm:px-4">
-                        {[
-                          { name: 'Q', label: 'Query', color: 'bg-pink-500' },
-                          { name: 'K', label: 'Key', color: 'bg-blue-500' },
-                          { name: 'V', label: 'Value', color: 'bg-indigo-500' }
-                        ].map((mat) => (
-                          <motion.div
-                             key={mat.name}
-                             animate={{
-                                y: activeStep?.type === 'attention_qkv' && activeStep?.layer === layerIdx ? [0, -2, 0] : 0,
-                                boxShadow: activeStep?.type === 'attention_qkv' && activeStep?.layer === layerIdx ? `0 0 12px ${mat.color.replace('bg-', '')}` : 'none',
-                                borderColor: activeStep?.type === 'attention_qkv' && activeStep?.layer === layerIdx ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.1)'
-                             }}
-                             className="relative flex flex-col items-center gap-0.5 group z-10"
-                          >
-                            <div className={`w-5 h-5 text-[10px] rounded border border-white/10 flex items-center justify-center font-black ${mat.color}/20 text-white shadow-lg`}>
-                              {mat.name}
-                            </div>
-                            <span className="hidden sm:block text-[7px] font-mono opacity-80 uppercase tracking-widest">{mat.label}</span>
-                          </motion.div>
-                        ))}
-                      </div>
-
-                      {/* The Heads */}
-                      <div className="flex gap-0.5 sm:gap-1 justify-center mt-1 relative w-full">
-                        {/* Animated paths for MatMul */}
-                        <AnimatePresence>
-                          {activeStep?.type === 'attention_scores' && activeStep?.layer === layerIdx && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.8, y: -20 }}
-                              animate={{ opacity: 1, scale: 1, y: -10 }}
-                              exit={{ opacity: 0, scale: 0.9 }}
-                              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-purple-600 border border-purple-400 text-white text-[9px] px-3 py-1 rounded-full z-20 font-mono shadow-[0_0_15px_rgba(168,85,247,0.8)] whitespace-nowrap"
-                            >
-                              Softmax(Q×K<sup className="text-[6px]">T</sup> / √d)
-                            </motion.div>
-                          )}
-                          {activeStep?.type === 'attention_output' && activeStep?.layer === layerIdx && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                              animate={{ opacity: 1, scale: 1, y: -10 }}
-                              exit={{ opacity: 0, scale: 0.9 }}
-                              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-600 border border-indigo-400 text-white text-[9px] px-3 py-1 rounded-full z-20 font-mono shadow-[0_0_15px_rgba(99,102,241,0.8)] whitespace-nowrap"
-                            >
-                              Weights × V
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-
-                        {Array.from({ length: numHeads }).map((_, i) => (
-                          <div key={i} className={`flex-1 rounded border overflow-hidden flex flex-col items-center justify-center transition-all duration-300 relative ${
-                            (activeStep?.type?.startsWith('attention') || activeStep?.type === 'concat_heads') && activeStep?.layer === layerIdx
-                              ? 'bg-purple-950/50 border-purple-500/30'
-                              : 'bg-slate-900/50 border-white/5'
-                          }`}>
-                            <div className="w-full py-0.5 bg-black/40 text-center border-b border-white/5">
-                              <span className="hidden sm:inline text-[7px] font-mono opacity-80">Head {i+1}</span>
-                            </div>
-
-                            <div className="flex gap-1 py-1 px-1 items-center h-8 justify-center w-full">
-                              {((activeStep?.type?.startsWith('attention') || activeStep?.type === 'concat_heads') && activeStep?.layer === layerIdx) ? (
-                                <div className="flex items-center gap-1">
-                                   <motion.div
-                                      animate={{
-                                         height: activeStep.type === 'attention_scores' ? 16 : 8,
-                                         opacity: activeStep.type === 'attention_output' ? 0.5 : 1
-                                      }}
-                                      className="w-1.5 sm:w-1.5 bg-gradient-to-b from-pink-500/80 to-blue-500/80 rounded-[2px] shadow-[0_0_5px_rgba(236,72,153,0.5)]"
-                                   />
-                                   <motion.div
-                                      animate={{
-                                         height: activeStep.type === 'attention_output' ? 16 : 8,
-                                         x: activeStep.type === 'concat_heads' ? -4 : 0,
-                                         scale: activeStep.type === 'concat_heads' ? 1.2 : 1
-                                      }}
-                                      className="w-1.5 sm:w-1.5 bg-indigo-500/80 rounded-[2px] shadow-[0_0_5px_rgba(99,102,241,0.5)]"
-                                   />
-                                </div>
-                              ) : (
-                                   <GitMerge className="w-3 h-3 opacity-20" />
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Concat & Linear Projection */}
-                      <motion.div
-                         animate={{
-                            backgroundColor: activeStep?.type === 'concat_heads' && activeStep?.layer === layerIdx ? 'rgba(147,51,234,0.4)' : 'rgba(255,255,255,0.05)',
-                            borderColor: activeStep?.type === 'concat_heads' && activeStep?.layer === layerIdx ? 'rgba(168,85,247,0.6)' : 'rgba(255,255,255,0.1)'
-                         }}
-                         className="mt-1 h-6 rounded-lg border flex items-center justify-center transition-colors"
-                      >
-                        <span className={`text-[8px] tracking-widest uppercase font-mono ${activeStep?.type === 'concat_heads' && activeStep?.layer === layerIdx ? 'text-purple-200' : 'text-slate-500'}`}>
-                           Concat + Linear Proj (<span className="opacity-80">W<sup>O</sup></span>)
-                        </span>
-                      </motion.div>
-                    </div>
-                  </div>
-
-                  {/* Add & Norm 2 */}
-                  <div className="flex justify-center -mb-2 mt-[-8px] z-10">
-                    <motion.div
-                      animate={{
-                        scale: activeStep?.type === 'add_norm_2' && activeStep?.layer === layerIdx ? 1.05 : 1,
-                        backgroundColor: activeStep?.type === 'add_norm_2' && activeStep?.layer === layerIdx ? 'rgba(56, 189, 248, 0.2)' : 'rgba(30, 41, 59, 1)',
-                        borderColor: activeStep?.type === 'add_norm_2' && activeStep?.layer === layerIdx ? 'rgba(56, 189, 248, 0.5)' : 'rgba(255, 255, 255, 0.1)',
-                        color: activeStep?.type === 'add_norm_2' && activeStep?.layer === layerIdx ? '#38bdf8' : '#94a3b8'
-                      }}
-                      className="text-[8px] font-mono px-2 py-0.5 rounded-full border flex items-center gap-1 shadow-lg translate-y-2"
-                    >
-                      <Combine className="w-2.5 h-2.5" /> Add & LayerNorm
-                    </motion.div>
-                  </div>
+              {status !== 'idle' && (
+                <div className="absolute top-10 bottom-10 left-[2.5rem] sm:left-1/2 sm:-translate-x-1/2 w-[3px] bg-slate-800/80 rounded-full overflow-hidden z-0">
+                   <motion.div
+                     className="w-full bg-gradient-to-b from-indigo-500 via-purple-500 to-emerald-500 absolute top-0"
+                     initial={{ height: '0%', top: '0%' }}
+                     animate={{
+                        height: status === 'complete' ? '100%' : '15%',
+                        top: status === 'complete' ? '0%' : (
+                           activeStep === 'input' ? '0%' :
+                           activeStep === 'embedding' ? '25%' :
+                           activeStep === 'encoder' ? '50%' :
+                           activeStep === 'pooling' ? '80%' :
+                           activeStep === 'output' ? '90%' : '-20%'
+                        ),
+                     }}
+                     transition={{ type: 'tween', ease: 'easeInOut', duration: status === 'complete' ? 0.3 : 0.6 }}
+                   />
                 </div>
-              ))}
-            </div>
+              )}
 
-            {/* Input Embedding */}
-            <div className={`p-3 rounded-xl border transition-all duration-300 mt-2 flex flex-col items-center justify-center ${
-              activeStep?.type === 'embedding'
-                ? 'bg-pink-500/20 border-pink-500/50 shadow-[0_0_15px_rgba(236,72,153,0.3)]'
-                : 'bg-white/5 border-white/10 text-slate-400'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-mono tracking-wider">Input Embedding + Positional Encoding</span>
-              </div>
-              <div className="flex gap-1 w-full max-w-sm justify-center">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <div key={i} className={`flex-1 h-2 rounded-sm transition-all duration-500 ${
-                    activeStep?.type === 'embedding'
-                      ? 'bg-pink-400 animate-pulse'
-                      : status === 'complete' ? 'bg-slate-500' : 'bg-slate-700'
-                  }`} style={{ animationDelay: `${i * 0.1}s` }} />
-                ))}
-              </div>
-            </div>
+             <div className="flex flex-col gap-6 sm:gap-8 relative z-10 items-start sm:items-center ml-[4rem] sm:ml-0">
 
+                {/* 1. Input */}
+                <StepNode
+                  isActive={activeStep === 'input'}
+                  isDone={activeStep !== 'input' && activeStep !== null}
+                  title="1. Read Text"
+                  subtitle="Breaking sentence into pieces (tokens)"
+                  icon={Type}
+                  layout="left"
+                >
+                </StepNode>
+
+                {/* 2. Embeddings */}
+                <StepNode
+                  isActive={activeStep === 'embedding'}
+                  isDone={['encoder', 'pooling', 'output'].includes(activeStep as string) || status === 'complete'}
+                  title="2. Word Meaning"
+                  subtitle="Converting pieces to numbers [50265 → 768]"
+                  icon={Key}
+                  layout="left"
+                >
+                    <div className="flex flex-col gap-1.5 pt-3 border-t border-white/5">
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10px] sm:text-[11px]">
+                          <div className="bg-black/30 p-1.5 sm:p-2 rounded-lg border border-white/5">
+                             <span className="text-pink-400 font-mono block mb-0.5">word_embeddings</span>
+                             <span className="text-slate-400">Core word identity</span>
+                          </div>
+                          <div className="bg-black/30 p-1.5 sm:p-2 rounded-lg border border-white/5">
+                             <span className="text-pink-400 font-mono block mb-0.5">position_embeddings</span>
+                             <span className="text-slate-400">Word order in sentence</span>
+                          </div>
+                       </div>
+                       <div className="flex items-center gap-2 text-[10px] sm:text-xs bg-amber-500/10 text-amber-300/80 p-1.5 sm:p-2 rounded-lg border border-amber-500/20">
+                         <Activity className="w-3 h-3 sm:w-3.5 sm:h-3.5"/> LayerNorm <span className="opacity-60 ml-auto font-mono">768</span>
+                       </div>
+                    </div>
+                </StepNode>
+
+                {/* 3. Encoder Layers */}
+                <StepNode
+                  isActive={activeStep === 'encoder'}
+                  isDone={['pooling', 'output'].includes(activeStep as string) || status === 'complete'}
+                  title="3. Deep Understanding"
+                  subtitle="Processing context across 12 layers"
+                  icon={BrainCircuit}
+                  layout="left"
+                >
+                    <div className="mt-3 w-full flex flex-col gap-2">
+                       <div className="flex items-center justify-between text-[10px] sm:text-xs text-indigo-300">
+                         <span>Active Layer</span>
+                         <span className="font-mono bg-indigo-500/20 px-2 py-0.5 rounded text-[9px] sm:text-[10px]">{activeLayer !== null ? activeLayer + 1 : 12} / 12</span>
+                       </div>
+                       <div className="w-full h-1.5 bg-black/50 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                          <motion.div
+                             className="h-full bg-indigo-500 rounded-full"
+                             initial={{ width: '0%' }}
+                             animate={{ width: `${((activeLayer !== null ? activeLayer + 1 : 12) / 12) * 100}%` }}
+                             transition={{ duration: 0.15 }}
+                          />
+                       </div>
+
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div className="bg-black/40 border border-purple-500/20 rounded-xl p-2 sm:p-3 relative overflow-hidden">
+                             {activeStep === 'encoder' && <motion.div animate={{ opacity: [0, 0.15, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="absolute inset-0 bg-purple-500" />}
+                             <div className="text-[10px] sm:text-xs font-semibold text-purple-300 relative z-10 flex items-center gap-1"><GitCommitVertical className="w-3 h-3 sm:w-3.5 sm:h-3.5"/> Self-Attention</div>
+                             <div className="text-[9px] sm:text-[10px] text-slate-400 leading-relaxed mt-0.5 relative z-10">Connecting context between all words.</div>
+                          </div>
+                          <div className="bg-black/40 border border-teal-500/20 rounded-xl p-2 sm:p-3 relative overflow-hidden">
+                             {activeStep === 'encoder' && <motion.div animate={{ opacity: [0, 0.15, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.5 }} className="absolute inset-0 bg-teal-500" />}
+                             <div className="text-[10px] sm:text-xs font-semibold text-teal-300 relative z-10 flex items-center gap-1"><ScanText className="w-3 h-3 sm:w-3.5 sm:h-3.5"/> Feed-Forward</div>
+                             <div className="text-[9px] sm:text-[10px] text-slate-400 leading-relaxed mt-0.5 relative z-10">Refining meaning via +GELU.</div>
+                          </div>
+                       </div>
+                    </div>
+                </StepNode>
+
+                {/* 4. Pooling */}
+                <StepNode
+                  isActive={activeStep === 'pooling'}
+                  isDone={['output'].includes(activeStep as string) || status === 'complete'}
+                  title="4. Summarize"
+                  subtitle="Condensing to one final thought"
+                  icon={Shrink}
+                  layout="left"
+                >
+                    <div className="text-[10px] sm:text-xs text-slate-400 bg-black/30 p-1.5 sm:p-2 rounded-lg border border-white/5 flex items-center gap-2">
+                      <span className="font-mono text-purple-400">[batch, 768]</span> <span className="text-white/20">→</span> <span className="font-mono text-pink-400">Tanh Projection</span>
+                    </div>
+                </StepNode>
+
+                {/* 5. Output */}
+                <StepNode
+                  isActive={activeStep === 'output' || status === 'complete'}
+                  isDone={status === 'complete'}
+                  isSuccess={status === 'complete'}
+                  title="5. Final Result"
+                  subtitle="Making the classification decision"
+                  icon={Target}
+                  layout="left"
+                >
+                    <div className="flex flex-col mt-3 pt-3 border-t border-white/5 gap-2">
+                       <div className="text-[10px] sm:text-xs text-slate-400 bg-black/30 p-1.5 sm:p-2 rounded-lg border border-white/5 flex items-center justify-between">
+                         <span className="font-mono text-purple-400">Linear [768]</span>
+                         <span className="text-white/20">→</span>
+                         <span className="font-mono text-emerald-400">Softmax [3]</span>
+                       </div>
+                       {status === 'complete' && result && (
+                         <div className="flex justify-center items-end gap-4 sm:gap-6 mt-2 mb-1">
+                           {[
+                             { key: 'positive', label: 'POS', barColor: 'bg-emerald-500', textColor: 'text-emerald-400' },
+                             { key: 'neutral', label: 'NEU', barColor: 'bg-amber-500', textColor: 'text-amber-400' },
+                             { key: 'negative', label: 'NEG', barColor: 'bg-rose-500', textColor: 'text-rose-400' },
+                           ].map(({ key, label, barColor, textColor }) => {
+                             const p = result.all.find((r) => r.label === key);
+                             const score = p ? p.score : 0;
+                             const pct = Math.max(score * 100, 2);
+                             return (
+                               <div key={key} className="flex flex-col items-center gap-1">
+                                 <div className="h-14 sm:h-16 w-4 sm:w-5 bg-black border border-white/10 rounded-full overflow-hidden flex flex-col justify-end">
+                                   <motion.div
+                                     initial={{ height: '0%' }}
+                                     animate={{ height: `${pct}%` }}
+                                     className={`w-full ${barColor} rounded-full`}
+                                   />
+                                 </div>
+                                 <span className={`text-[9px] sm:text-[10px] ${textColor}`}>{label}</span>
+                                 <span className="text-[7px] sm:text-[8px] text-slate-500 font-mono">{(score * 100).toFixed(0)}%</span>
+                               </div>
+                             );
+                           })}
+                         </div>
+                       )}
+                    </div>
+                </StepNode>
+
+             </div>
           </motion.div>
         </div>
       </div>

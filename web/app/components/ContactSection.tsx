@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Mail, Linkedin } from 'lucide-react';
+import { MessageCircle, Linkedin } from 'lucide-react';
 
 export default function ContactSection() {
   return (
@@ -22,10 +22,11 @@ export default function ContactSection() {
 
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <a
-              href="mailto:contact@example.com"
+              href="https://wa.me/6289504050526"
+              target="_blank" rel="noopener noreferrer"
               className="bg-indigo-600 border border-indigo-400 text-white px-8 py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-indigo-500 transition-colors flex items-center justify-center gap-3 hover:-translate-y-1 transform duration-300 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
             >
-              <Mail className="w-5 h-5" /> Drop an Email
+              <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
             </a>
             <a
               href="https://www.linkedin.com/in/nuraziztriindrawan/"

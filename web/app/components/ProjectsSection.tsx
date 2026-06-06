@@ -38,7 +38,7 @@ export default function ProjectsSection() {
           className="mb-12 md:mb-24 flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8"
         >
           <div>
-            <h3 className="font-mono text-indigo-400 text-sm uppercase tracking-[0.2em] mb-4">02 // Selected Work</h3>
+            <h3 className="font-mono text-indigo-400 text-sm uppercase tracking-[0.2em] mb-4">03 // Selected Work</h3>
             <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase">Featured <br className="hidden sm:block" /> Projects</h2>
           </div>
           <div className="text-slate-400 max-w-sm md:text-right font-light text-sm sm:text-base">

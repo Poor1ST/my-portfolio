@@ -5,7 +5,6 @@ export default function FooterSection() {
         &copy; {new Date().getFullYear()} Nur Aziz Tri Indrawan.
       </div>
       <div className="flex gap-6">
-        <a href="#" className="hover:text-white transition-colors">Twitter</a>
         <a href="#" className="hover:text-white transition-colors">GitHub</a>
         <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
       </div>

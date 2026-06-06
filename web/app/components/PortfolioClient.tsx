@@ -5,6 +5,7 @@ import { NAV_LINKS } from '@/lib/data';
 import Navbar from './Navbar';
 import HeroSection from './HeroSection';
 import SkillsSection from './SkillsSection';
+import ExperienceSection from './ExperienceSection';
 import InteractiveLab from './InteractiveLab';
 import ProjectsSection from './ProjectsSection';
 import ContactSection from './ContactSection';
@@ -24,8 +25,9 @@ export default function PortfolioClient() {
 
       <main className="relative z-20 w-full">
         <HeroSection scrollTo={scrollTo} />
-        <SkillsSection />
         <InteractiveLab />
+        <SkillsSection />
+        <ExperienceSection />
         <ProjectsSection />
         <ContactSection />
       </main>
