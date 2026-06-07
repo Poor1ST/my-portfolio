@@ -237,6 +237,7 @@ export const PROJECTS: Project[] = [
     tags: ['CycleGAN', 'Computer Vision', 'PyTorch'],
     date: '2022-12',
     categories: ['AI'],
+    live: 'https://face-to-comic.streamlit.app/',
     image: 'face_to_comic.png',
   },
   {
