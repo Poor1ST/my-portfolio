@@ -29,7 +29,7 @@ export default function ContactSection() {
               <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
             </a>
             <a
-              href="https://www.linkedin.com/in/nuraziztriindrawan/"
+              href="https://www.linkedin.com/in/nur-aziz-tri-indrawan/"
               target="_blank" rel="noopener noreferrer"
               className="bg-white/5 backdrop-blur-md border border-white/20 text-white px-8 py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-3 hover:-translate-y-1 transform duration-300 shadow-xl"
             >
