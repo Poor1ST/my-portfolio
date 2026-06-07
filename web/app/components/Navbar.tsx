@@ -25,7 +25,7 @@ export default function Navbar({ activeSection, isScrolled, scrollTo, navLinks }
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="text-xl font-bold tracking-tight"
+          className="text-xl font-bold tracking-tight" style={{ textShadow: '0 0 4px rgba(0,0,0,0.8)' }}
         >
           Nur Aziz<span className="text-indigo-400">.</span>
         </motion.div>
@@ -38,7 +38,7 @@ export default function Navbar({ activeSection, isScrolled, scrollTo, navLinks }
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
               onClick={() => handleNav(link.toLowerCase())}
-              className={`text-sm tracking-widest uppercase transition-colors relative ${activeSection === link ? 'text-white' : 'text-slate-400 hover:text-white'}`}
+              className={`text-sm tracking-widest uppercase transition-colors relative ${activeSection === link ? 'text-white' : 'text-slate-400 hover:text-white'}`} style={{ textShadow: '0 0 4px rgba(0,0,0,0.8)' }}
             >
               {link}
               {activeSection === link && (
@@ -51,7 +51,7 @@ export default function Navbar({ activeSection, isScrolled, scrollTo, navLinks }
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 text-sm uppercase tracking-wider font-semibold bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-5 py-2 hover:bg-white/20 text-slate-100 transition-all duration-300 shadow-md"
+              className="flex items-center gap-2 text-sm uppercase tracking-wider font-semibold bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-5 py-2 hover:bg-white/20 text-slate-100 transition-all duration-300 shadow-md" style={{ textShadow: '0 0 4px rgba(0,0,0,0.8)' }}
           >
             Connect
           </motion.a>
