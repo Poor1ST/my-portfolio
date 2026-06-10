@@ -114,9 +114,16 @@ export default function ProjectsSection() {
                   </div>
 
                   <div className="relative z-10 flex flex-col flex-1">
-                    <h4 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tighter mb-3 sm:mb-4 group-hover:text-indigo-400 transition-colors">
-                      {project.title}
-                    </h4>
+                    <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                      <h4 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tighter group-hover:text-indigo-400 transition-colors">
+                        {project.title}
+                      </h4>
+                      {project.status === 'in-progress' && (
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-xl shrink-0">
+                          In Development
+                        </span>
+                      )}
+                    </div>
 
                     <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
                       {project.roles.map(role => (

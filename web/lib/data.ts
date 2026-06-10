@@ -32,6 +32,7 @@ export interface Project {
   date: string;
   categories: string[];
   image: string;
+  status?: 'completed' | 'in-progress';
 }
 
 export interface ExperienceRole {
@@ -238,6 +239,7 @@ export const PROJECTS: Project[] = [
     date: '2022-12',
     categories: ['AI'],
     live: 'https://face-to-comic.streamlit.app/',
+    github: 'https://github.com/Poor1ST/convert-to-comic',
     image: 'face_to_comic.png',
   },
   {
@@ -282,5 +284,28 @@ export const PROJECTS: Project[] = [
     date: '2021-11',
     categories: ['AI'],
     image: 'snake_game.png',
+  },
+  {
+    title: 'Financial Research Agent',
+    roles: ['AI Developer', 'Full Stack Developer'],
+    description: 'A conversational AI agent that fetches live market data, searches financial news, queries ingested documents via RAG, and delivers structured analysis reports — built with LangChain, FastAPI, and React.',
+    overview: 'A full-stack conversational AI assistant for financial analysis. Users chat to get live market data (price, RSI, SMA), search financial news, upload PDFs for RAG-based Q&A, and request structured analysis reports with directional bias, confidence levels, support/resistance levels, and risk factors. Built entirely on free-tier APIs (Groq, DuckDuckGo, yfinance).',
+    technologies: ['Python', 'FastAPI', 'LangChain', 'React', 'TypeScript', 'ChromaDB', 'Groq', 'Docker'],
+    challenges: [
+      'Integrating multiple free-tier API services (Groq, DuckDuckGo, yfinance) into a reliable agent pipeline',
+      'Implementing local RAG with ChromaDB and HuggingFace embeddings without paid vector databases',
+      'Generating structured, markdown-formatted analysis reports from unstructured LLM output',
+    ],
+    solutions: [
+      'Used LangChain ReAct agent framework with ConversationBufferWindowMemory to orchestrate tool calls across free APIs',
+      'Deployed ChromaDB with sentence-transformers/all-MiniLM-L6-v2 for fully local, no-cost document retrieval',
+      'Designed a structured Pydantic analysis report schema with clear agent prompts to produce consistent report formatting',
+    ],
+    tags: ['LangChain', 'FastAPI', 'RAG', 'LLM', 'Financial Analysis'],
+    github: 'https://github.com/Poor1ST/Financial-Research-Agent',
+    date: '2025-06',
+    categories: ['AI', 'Front End'],
+    image: 'financial_research_agent.png',
+    status: 'in-progress',
   },
 ];

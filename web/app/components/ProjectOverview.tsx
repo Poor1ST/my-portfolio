@@ -82,14 +82,21 @@ export default function ProjectOverview({ project, onClose }: ProjectOverviewPro
                 ))}
               </motion.div>
 
-              <motion.h2
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.25, duration: 0.35 }}
-                className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter mb-4"
+                className="flex items-center gap-3 mb-4"
               >
-                {project.title}
-              </motion.h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter">
+                  {project.title}
+                </h2>
+                {project.status === 'in-progress' && (
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-xl shrink-0">
+                    In Development
+                  </span>
+                )}
+              </motion.div>
 
               {/* Secondary modal content - Fades in gracefully */}
               <motion.div
