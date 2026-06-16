@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { Briefcase } from 'lucide-react';
-import { EXPERIENCES } from '@/lib/data';
+import { EXPERIENCES } from '@/lib/content/experiences';
 
 const typeLabel = { internship: 'Internship', apprenticeship: 'Apprenticeship', organization: 'Organization' };
 

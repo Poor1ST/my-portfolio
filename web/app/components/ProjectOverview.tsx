@@ -4,8 +4,8 @@ import { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, Github } from 'lucide-react';
 import Image from 'next/image';
-import type { Project } from '@/lib/data';
-import { smoothSpring } from './ProjectsSection';
+import type { Project } from '@/lib/types';
+import { smoothSpring } from '@/lib/animation';
 
 interface ProjectOverviewProps {
   project: Project | null;

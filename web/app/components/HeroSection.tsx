@@ -1,10 +1,13 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { motion } from 'motion/react';
-import { ArrowRight, Github, Linkedin, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
-import Hero3D from './Hero3D';
+import { SOCIAL_LINKS } from '@/lib/social';
 import TypingText from './TypingText';
+
+const Hero3D = dynamic(() => import('./Hero3D'), { ssr: false });
 
 interface HeroSectionProps {
   scrollTo: (id: string) => void;
@@ -42,11 +45,11 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
               <div className="flex items-center gap-3 sm:gap-4 justify-center sm:px-4">
-                <a href="https://github.com/Poor1ST" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
-                  <Github className="w-5 h-5" />
+                <a href={SOCIAL_LINKS.github.url} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                  <SOCIAL_LINKS.github.icon className="w-5 h-5" />
                 </a>
-                <a href="https://www.linkedin.com/in/nur-aziz-tri-indrawan/" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
-                  <Linkedin className="w-5 h-5" />
+                <a href={SOCIAL_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                  <SOCIAL_LINKS.linkedin.icon className="w-5 h-5" />
                 </a>
               </div>
             </div>
@@ -64,6 +67,7 @@ export default function HeroSection({ scrollTo }: HeroSectionProps) {
               <Image
                 src="/project_photo/profile.JPG"
                 alt="Nur Aziz"
+                loading="eager"
                 fill
                 sizes="(max-width: 640px) 192px, (max-width: 768px) 256px, 288px"
                 className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"

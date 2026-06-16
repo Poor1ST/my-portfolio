@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { SKILLS } from '@/lib/data';
+import { SKILLS } from '@/lib/content/skills';
 
 export default function SkillsSection() {
   return (

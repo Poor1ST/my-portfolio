@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { MessageCircle, Linkedin } from 'lucide-react';
+import { SOCIAL_LINKS } from '@/lib/social';
 
 export default function ContactSection() {
   return (
@@ -22,18 +22,18 @@ export default function ContactSection() {
 
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <a
-              href="https://wa.me/6289504050526"
+              href={SOCIAL_LINKS.whatsapp.url}
               target="_blank" rel="noopener noreferrer"
               className="bg-indigo-600 border border-indigo-400 text-white px-8 py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-indigo-500 transition-colors flex items-center justify-center gap-3 hover:-translate-y-1 transform duration-300 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
             >
-              <MessageCircle className="w-5 h-5" /> Chat on WhatsApp
+              <SOCIAL_LINKS.whatsapp.icon className="w-5 h-5" /> Chat on WhatsApp
             </a>
             <a
-              href="https://www.linkedin.com/in/nur-aziz-tri-indrawan/"
+              href={SOCIAL_LINKS.linkedin.url}
               target="_blank" rel="noopener noreferrer"
               className="bg-white/5 backdrop-blur-md border border-white/20 text-white px-8 py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-3 hover:-translate-y-1 transform duration-300 shadow-xl"
             >
-              <Linkedin className="w-5 h-5" /> LinkedIn
+              <SOCIAL_LINKS.linkedin.icon className="w-5 h-5" /> LinkedIn
             </a>
           </div>
         </motion.div>

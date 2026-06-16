@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import PortfolioClient from './components/PortfolioClient';
+import FooterSection from './components/FooterSection';
 
 export const metadata: Metadata = {
   title: 'Nur Aziz Tri Indrawan | AI & Frontend Developer',
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <PortfolioClient />;
+  return (
+    <>
+      <PortfolioClient />
+      <FooterSection />
+    </>
+  );
 }

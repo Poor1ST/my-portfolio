@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, Github } from 'lucide-react';
 import Image from 'next/image';
-import { PROJECTS, CATEGORIES } from '@/lib/data';
+import { PROJECTS } from '@/lib/content/projects';
+import { CATEGORIES } from '@/lib/constants';
+import { smoothSpring } from '@/lib/animation';
 import ProjectOverview from './ProjectOverview';
-
-// Define a buttery-smooth spring transition to use across both components
-export const smoothSpring = { type: 'spring', bounce: 0.15, duration: 0.6 } as const;
 
 export default function ProjectsSection() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
